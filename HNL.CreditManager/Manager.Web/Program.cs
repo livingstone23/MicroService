@@ -1,6 +1,7 @@
 using Manager.Web;
 using Manager.Web.Services;
 using Manager.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,30 @@ SD.ProductAPIBase = builder.Configuration["ServiceUrls:ProductAPI"];
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddControllersWithViews();
+
+//53.1 Setup Main Project to use Identity Server, Luego de instalar los 3 paquetes requeridos
+//Microsoft.aspnetcore.authentication, Microsoft.AspNetCore.Authentication.OpenIdConnect, System.IdentityModel.Tokens.Jwt
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultScheme = "Cookies";
+//    options.DefaultChallengeScheme = "oidc";
+//})
+//.AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
+//.AddOpenIdConnect("oidc", options =>
+//{
+//    options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+//    options.GetClaimsFromUserInfoEndpoint = true;
+//    options.ClientId = "HNL";
+//    options.ClientSecret = "secret";
+//    options.ResponseType = "code";
+//    //options.ClaimActions.MapJsonKey("role", "role", "role");
+//    //options.ClaimActions.MapJsonKey("sub", "sub", "sub");
+//    options.TokenValidationParameters.NameClaimType = "name";
+//    options.TokenValidationParameters.RoleClaimType = "role";
+//    options.Scope.Add("HNL");
+//    options.SaveTokens = true;
+
+//});
 
 
 var app = builder.Build();
@@ -31,7 +56,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
+//app.UseRouting();
+
+//53.2 Realizando llamado a la authenticacion.
+app.UseAuthentication();
 
 app.UseAuthorization();
 
