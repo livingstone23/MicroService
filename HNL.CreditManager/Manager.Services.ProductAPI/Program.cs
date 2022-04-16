@@ -19,7 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:44337/";
+        options.Authority = "https://localhost:44349/";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false
@@ -106,6 +106,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+//59.2 Habilitamos en el api la lectura del token
+app.UseAuthentication();
 
 app.UseAuthorization();
 
