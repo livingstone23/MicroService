@@ -24,7 +24,7 @@ namespace Manager.Services.ProductAPI.Controllers
         }
 
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<object> Get()
         {
@@ -45,7 +45,7 @@ namespace Manager.Services.ProductAPI.Controllers
 
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         [Route("{id}")]
         public async Task<object> Get(int id)
         {

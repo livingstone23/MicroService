@@ -24,6 +24,7 @@ namespace Manager.Web.Controllers
         {
             List<ProductDto> list = new();
 
+            //60.2 Se obtiene el token para enviarse en los llamados
             var accessToken = await HttpContext.GetTokenAsync("access_token");
 
             var response = await _productService.GetAllProductsAsync<ResponseDto>(accessToken);
@@ -48,7 +49,9 @@ namespace Manager.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                //60.2 Se obtiene el token para enviarse en los llamados
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
+
                 var response = await _productService.CreateProductAsync<ResponseDto>(model, accessToken);
                 //var response = await _productService.CreateProductAsync<ResponseDto>(model);
                 if (response != null && response.IsSuccess)
@@ -62,7 +65,9 @@ namespace Manager.Web.Controllers
 
         public async Task<IActionResult> ProductEdit(int productId)
         {
+            //60.2 Se obtiene el token para enviarse en los llamados
             var accessToken = await HttpContext.GetTokenAsync("access_token");
+
             var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
             //var response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
             if (response != null && response.IsSuccess)
@@ -75,12 +80,14 @@ namespace Manager.Web.Controllers
 
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProductEdit(ProductDto model)
         {
             if (ModelState.IsValid)
             {
+                //60.2 Se obtiene el token para enviarse en los llamados
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
+
                 var response = await _productService.UpdateProductAsync<ResponseDto>(model, accessToken);
                 //var response = await _productService.UpdateProductAsync<ResponseDto>(model);
                 if (response != null && response.IsSuccess)
@@ -92,10 +99,13 @@ namespace Manager.Web.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> ProductDelete(int productId)
         {
+            //60.2 Se obtiene el token para enviarse en los llamados
             var accessToken = await HttpContext.GetTokenAsync("access_token");
+
             var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
             //var response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
             if (response != null && response.IsSuccess)
@@ -107,13 +117,16 @@ namespace Manager.Web.Controllers
         }
         
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProductDelete(ProductDto model)
         {
             if (ModelState.IsValid)
             {
+                //60.2 Se obtiene el token para enviarse en los llamados
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
+
                 var response = await _productService.DeleteProductAsync<ResponseDto>(model.ProductId, accessToken);
                 //var response = await _productService.DeleteProductAsync<ResponseDto>(model.ProductId);
                 if (response.IsSuccess)

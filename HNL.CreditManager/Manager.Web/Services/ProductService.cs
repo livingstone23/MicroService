@@ -68,7 +68,7 @@ namespace Manager.Web.Services
                 ApiType = SD.ApiType.PUT,
                 Data = productDto,
                 Url = SD.ProductAPIBase + "/api/ProductAPI",
-                AccessToken = ""
+                AccessToken = token
             });
         }
         
