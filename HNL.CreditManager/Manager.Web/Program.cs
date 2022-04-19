@@ -11,9 +11,11 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient<IProductService, ProductService>();
 SD.ProductAPIBase = builder.Configuration["ServiceUrls:ProductAPI"];
+SD.ShoppingCartAPIBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
 
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddControllersWithViews();
 
 //53.1 Setup Main Project to use Identity Server, Luego de instalar los 3 paquetes requeridos
