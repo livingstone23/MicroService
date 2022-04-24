@@ -90,6 +90,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Habilitamos el servicio de producto
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+//builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 
 var app = builder.Build();

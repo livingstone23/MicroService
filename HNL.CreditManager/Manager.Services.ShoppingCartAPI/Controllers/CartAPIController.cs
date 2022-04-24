@@ -17,18 +17,18 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
     public class CartAPIController : Controller
     {
         private readonly ICartRepository _cartRepository;
-        private readonly ICouponRepository _couponRepository;
         protected ResponseDto _response;
+        //private readonly ICouponRepository _couponRepository;
 
         //private readonly IMessageBus _messageBus;
         //private readonly IRabbitMQCartMessageSender _rabbitMQCartMessageSender;
 
-        public CartAPIController(ICartRepository cartRepository, ICouponRepository couponRepository)
+        public CartAPIController(ICartRepository cartRepository)//, ICouponRepository couponRepository)
              //, IRabbitMQCartMessageSender rabbitMQCartMessageSender, IMessageBus messageBus)
         {
             _cartRepository = cartRepository;
-            _couponRepository = couponRepository;
             this._response = new ResponseDto();
+            //_couponRepository = couponRepository;
 
             //_rabbitMQCartMessageSender = rabbitMQCartMessageSender;
             //_messageBus = messageBus;

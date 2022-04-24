@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manager.Services.ShoppingCartAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220419174446_AddProductAndCartModels")]
+    [Migration("20220423175515_AddProductAndCartModels")]
     partial class AddProductAndCartModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,12 +57,7 @@ namespace Manager.Services.ShoppingCartAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartHeaderId"), 1L, 1);
 
-                    b.Property<string>("CouponCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CartHeaderId");
@@ -76,15 +71,12 @@ namespace Manager.Services.ShoppingCartAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
