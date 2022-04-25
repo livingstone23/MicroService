@@ -1,5 +1,4 @@
-﻿{
-  "$schema": "https://json.schemastore.org/launchsettings.json",
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -8,16 +7,20 @@
       "sslPort": 44330
     }
   },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "Manager.Services.CouponAPI": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
+      "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7093;http://localhost:5093",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "sqlDebugging": false,
+      "dotnetRunMessages": true,
+      "nativeDebugging": false,
+      "applicationUrl": "https://localhost:7093;http://localhost:5093",
+      "jsWebView2Debugging": false
     },
     "IIS Express": {
       "commandName": "IISExpress",
