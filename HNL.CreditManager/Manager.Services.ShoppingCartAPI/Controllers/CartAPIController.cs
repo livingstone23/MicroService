@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Manager.MessageBus;
 using Manager.Services.ShoppingCartAPI.Messages;
 
 namespace Manager.Services.ShoppingCartAPI.Controllers
@@ -20,6 +21,7 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
 
 
         private readonly ICartRepository _cartRepository;
+        private readonly IMessageBus _messageBus;
         protected ResponseDto _response;
 
 
@@ -28,15 +30,16 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
         //private readonly IRabbitMQCartMessageSender _rabbitMQCartMessageSender;
 
 
-        public CartAPIController(ICartRepository cartRepository)//, ICouponRepository couponRepository)
+        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus)//, ICouponRepository couponRepository)
              //, IRabbitMQCartMessageSender rabbitMQCartMessageSender, IMessageBus messageBus)
         {
             _cartRepository = cartRepository;
             this._response = new ResponseDto();
+            _messageBus = messageBus;
+            
             //_couponRepository = couponRepository;
-
             //_rabbitMQCartMessageSender = rabbitMQCartMessageSender;
-            //_messageBus = messageBus;
+
 
         }
 
@@ -168,8 +171,10 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
                 //}
 
                 checkoutHeader.CartDetails = cartDto.CartDetails;
+
                 //logic to add message to process order.
-                //await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue");
+                //El "checkoutqueue" corresponde al configurado en el Azure
+                await _messageBus.PublishMessage(checkoutHeader, "checkoutmessagetopic");
 
                 ////rabbitMQ
                 //_rabbitMQCartMessageSender.SendMessage(checkoutHeader, "checkoutqueue");

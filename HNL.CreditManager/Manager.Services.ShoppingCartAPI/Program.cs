@@ -1,4 +1,5 @@
 using AutoMapper;
+using Manager.MessageBus;
 using Manager.Services.ShoppingCartAPI;
 using Manager.Services.ShoppingCartAPI.DbContexts;
 using Manager.Services.ShoppingCartAPI.Repository;
@@ -90,6 +91,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Habilitamos el servicio de producto
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+
+//118. Habilitamos las interfaces del ServiceBus
+builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+
+
 //builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 

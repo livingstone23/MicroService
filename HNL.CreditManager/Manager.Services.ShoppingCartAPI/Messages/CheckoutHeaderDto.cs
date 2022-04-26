@@ -1,8 +1,9 @@
-﻿using Manager.Services.ShoppingCartAPI.Models.Dto;
+﻿using Manager.MessageBus;
+using Manager.Services.ShoppingCartAPI.Models.Dto;
 
 namespace Manager.Services.ShoppingCartAPI.Messages
 {
-    public class CheckoutHeaderDto 
+    public class CheckoutHeaderDto :BaseMessage
     {
 
         public int CartHeaderId { get; set; }
