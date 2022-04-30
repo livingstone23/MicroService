@@ -1,8 +1,6 @@
 using AutoMapper;
-using Manager.MessageBus;
-using Manager.Services.ShoppingCartAPI;
-using Manager.Services.ShoppingCartAPI.DbContexts;
-using Manager.Services.ShoppingCartAPI.Repository;
+using Manager.Services.OrderAPI.DbContexts;
+using Manager.Services.OrderAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -10,8 +8,8 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
 
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -30,6 +28,8 @@ builder.Services.AddAuthentication("Bearer")
 
     });
 
+
+
 //52.2 - Asegurando el API con Authorizacion.
 builder.Services.AddAuthorization(options =>
 {
@@ -43,7 +43,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Manager.Services.ShoppingCartAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Manager.Services.OrderAPI", Version = "v1" });
 
     //52.3 - Para habilitar la autorizacion en el swagger
     c.EnableAnnotations();
@@ -78,26 +78,37 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
+
 //Conexion a la DB
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 
+
 //Habilitando el AutoMapper
-IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-builder.Services.AddSingleton(mapper);
+//IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+//builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
+
 //Habilitamos el servicio de producto
-builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 
-//118. Habilitamos las interfaces del ServiceBus
-builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+
+//Se agrega el option builder y permite eliminar el AddScoped de Order reporitory para 
+//poder trabajar con el service Bus en OrderRepository
+//video 126
+var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+optionBuilder.UseSqlServer(connectionString);
+builder.Services.AddSingleton(new OrderRepository(optionBuilder.Options));
+
+
 
 
 var app = builder.Build();
+
 
 
 // Configure the HTTP request pipeline.
@@ -106,7 +117,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseHttpsRedirection();
 

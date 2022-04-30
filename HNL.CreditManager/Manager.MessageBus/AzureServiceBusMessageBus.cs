@@ -33,19 +33,19 @@ namespace Manager.MessageBus
 
 
             //Segunda version del metodo con paquete Azure.Messaging.ServiceBus 7.7.0
-                await using var client = new ServiceBusClient(connectionString);
+            await using var client = new ServiceBusClient(connectionString);
 
-                ServiceBusSender sender = client.CreateSender(topicName);
+            ServiceBusSender sender = client.CreateSender(topicName);
 
-                var jsonMessage = JsonConvert.SerializeObject(message);
-                ServiceBusMessage finalMessage = new ServiceBusMessage(Encoding.UTF8.GetBytes(jsonMessage))
-                {
-                    CorrelationId = Guid.NewGuid().ToString()
-                };
+            var jsonMessage = JsonConvert.SerializeObject(message);
+            ServiceBusMessage finalMessage = new ServiceBusMessage(Encoding.UTF8.GetBytes(jsonMessage))
+            {
+                CorrelationId = Guid.NewGuid().ToString()
+            };
 
-                await sender.SendMessageAsync(finalMessage);
+            await sender.SendMessageAsync(finalMessage);
 
-                await client.DisposeAsync();
+            await client.DisposeAsync();
 
 
         }
