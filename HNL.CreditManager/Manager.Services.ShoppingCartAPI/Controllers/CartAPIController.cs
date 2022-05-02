@@ -177,11 +177,16 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
                 //El "checkoutqueue" corresponde al configurado en el Azure
                 await _messageBus.PublishMessage(checkoutHeader, "checkoutmessagetopic");
 
+                //Vid 152 - Usar Queue, en el bus de servicio de dato.
+                //await _messageBus.PublishMessage(checkoutHeader, "checkoutqueue");
+
+                //Una vez realizado el pedido limpia  el carrito del usuario.
+                await _cartRepository.ClearCart(checkoutHeader.UserId);
                 ////rabbitMQ
                 //_rabbitMQCartMessageSender.SendMessage(checkoutHeader, "checkoutqueue");
-                //await _cartRepository.ClearCart(checkoutHeader.UserId);
 
-                
+
+
 
             }
             catch (Exception ex)

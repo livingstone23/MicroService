@@ -26,12 +26,18 @@ namespace Manager.Services.OrderAPI.Messaging
         //Vid130.1- Variable para recibir los mensajes del service bus
         private ServiceBusProcessor checkOutProcessor;
 
+        //Vid149.4 Consume payment Status para recibir los mensajes del service bus
+        private ServiceBusProcessor orderUpdatePaymentStatusProcessor;
 
-        //Vid143. 3 Inyectamos IMessageBus para integrar PaymentStatus
+
+        //Vid143.3 Inyectamos IMessageBus para integrar PaymentStatus
         private readonly IMessageBus _messageBus;
 
         //Vid144.2 public payment message
         private readonly string orderPaymentProcessTopic;
+
+        //Vid149.2 Consume payment Status
+        private readonly string orderUpdatePaymentResultTopic;
 
         public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration, IMessageBus messageBus)
         {
@@ -50,8 +56,18 @@ namespace Manager.Services.OrderAPI.Messaging
             var client = new ServiceBusClient(serviceBusConnectionString);
             checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckOut);
 
+            //Vid 153.2 Si utilizaramos solo Queue sin asociar a un topic
+            //checkOutProcessor = client.CreateProcessor(checkoutMessageTopic);
+
+
             //Vid144.3 public payment message
             orderPaymentProcessTopic = _configuration.GetValue<string>("OrderPaymentProcessTopic");
+
+            //Vid149.3 Consume payment Status
+            orderUpdatePaymentResultTopic = _configuration.GetValue<string>("OrderUpdatePaymentResultTopic");
+
+            //Vid149.5 Consume payment Status
+            orderUpdatePaymentStatusProcessor = client.CreateProcessor(orderPaymentProcessTopic, subscriptionCheckOut);
 
 
         }
@@ -63,13 +79,23 @@ namespace Manager.Services.OrderAPI.Messaging
             checkOutProcessor.ProcessErrorAsync += ErrorHandler;
             await checkOutProcessor.StartProcessingAsync();
 
+            //Vid149.6 Ejecutamos el proceso para conocer el cambio de status del pago
+            orderUpdatePaymentStatusProcessor.ProcessMessageAsync += OnCheckOutMessageReceived;
+            orderUpdatePaymentStatusProcessor.ProcessErrorAsync += ErrorHandler;
+            await orderUpdatePaymentStatusProcessor.StartProcessingAsync();
+
         }
 
         public async Task Stop()
         {
             
-            await checkOutProcessor.StartProcessingAsync();
+            await checkOutProcessor.StopProcessingAsync();
             await checkOutProcessor.DisposeAsync();
+
+
+            //Vid149.7 Ejecutamos el proceso para detener el consumo de proceso. 
+            await orderUpdatePaymentStatusProcessor.StopProcessingAsync();
+            await orderUpdatePaymentStatusProcessor.DisposeAsync();
 
         }
 
@@ -157,7 +183,23 @@ namespace Manager.Services.OrderAPI.Messaging
         }
 
 
+        /// <summary>
+        /// Metodo para actualizar la actualizacion del status.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private async Task OnOrderPaymentUpdateReceived(ProcessMessageEventArgs args)
+        {
 
+            var message = args.Message;
+            var body = Encoding.UTF8.GetString(message.Body);
+
+            UpdatePaymentResultMessage paymentResultMessage = JsonConvert.DeserializeObject<UpdatePaymentResultMessage>(body);
+
+            await _orderRepository.UpdateOrderPaymentStatus(paymentResultMessage.OrderId, paymentResultMessage.Status);
+            await args.CompleteMessageAsync(args.Message);
+
+        }
 
 
 

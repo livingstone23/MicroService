@@ -15,6 +15,7 @@ namespace Manager.Services.PaymentAPI.Messaging
         private readonly string orderupdatepaymentresulttopic;
 
         private ServiceBusProcessor orderPaymentProcessor;
+
         private readonly IProcessPayment _processPayment;
         private readonly IConfiguration _configuration;
         private readonly IMessageBus _messageBus;
