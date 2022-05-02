@@ -67,6 +67,8 @@ namespace Manager.Services.PaymentAPI.Messaging
             {
                 Status = result,
                 OrderId = paymentRequestMessage.OrderId,
+
+
                 Email = paymentRequestMessage.Email
             };
 

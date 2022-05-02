@@ -158,13 +158,17 @@ namespace Manager.Services.OrderAPI.Messaging
             //Vid143. 6 Inyectamos Creamos el llamado al objeto de pago
             PaymentRequestMessage paymentRequestMessage = new()
             {
+
                 Name = orderHeader.FirstName + " " + orderHeader.LastName,
                 CardNumber = orderHeader.CardNumber,
                 CVV = orderHeader.CVV,
                 ExpiryMonthYear = orderHeader.ExpiryMonthYear,
                 OrderId = orderHeader.OrderHeaderId,
                 OrderTotal = orderHeader.OrderTotal,
+
+
                 Email = orderHeader.Email
+
             };
 
             try
