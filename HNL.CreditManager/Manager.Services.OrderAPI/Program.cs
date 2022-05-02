@@ -1,5 +1,8 @@
 using AutoMapper;
+using Manager.MessageBus;
 using Manager.Services.OrderAPI.DbContexts;
+using Manager.Services.OrderAPI.Extension;
+using Manager.Services.OrderAPI.Messaging;
 using Manager.Services.OrderAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -104,6 +107,11 @@ var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 optionBuilder.UseSqlServer(connectionString);
 builder.Services.AddSingleton(new OrderRepository(optionBuilder.Options));
 
+//Vid131 .2 Instanciamos los metodos del azure service bus
+builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
+
+//Vid143. 2 Instanciado IMessageBus para integrar PaymentStatus
+builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 
 
 
@@ -128,5 +136,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//Vid131 .3 Realizamos el llamado a los metodos del service bus
+app.UseAzureServiceBusConsumer();
 
 app.Run();

@@ -5,6 +5,7 @@ using Manager.Services.OrderAPI.Repository;
 using Newtonsoft.Json;
 //using Newtonsoft.Json;
 using System.Text;
+using Manager.MessageBus;
 
 //using Manager.MessageBus;
 
@@ -25,11 +26,20 @@ namespace Manager.Services.OrderAPI.Messaging
         //Vid130.1- Variable para recibir los mensajes del service bus
         private ServiceBusProcessor checkOutProcessor;
 
-        public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration)
+
+        //Vid143. 3 Inyectamos IMessageBus para integrar PaymentStatus
+        private readonly IMessageBus _messageBus;
+
+        //Vid144.2 public payment message
+        private readonly string orderPaymentProcessTopic;
+
+        public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration, IMessageBus messageBus)
         {
             
             _orderRepository = orderRepository;
             _configuration = configuration;
+            //Vid143. 5 Inyectamos IMessageBus
+            _messageBus = messageBus;
 
 
             serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
@@ -39,6 +49,11 @@ namespace Manager.Services.OrderAPI.Messaging
             //Vid130.2- Variable para recibir los mensajes del service bus
             var client = new ServiceBusClient(serviceBusConnectionString);
             checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckOut);
+
+            //Vid144.3 public payment message
+            orderPaymentProcessTopic = _configuration.GetValue<string>("OrderPaymentProcessTopic");
+
+
         }
 
         public async Task Start()
@@ -113,6 +128,31 @@ namespace Manager.Services.OrderAPI.Messaging
 
             await _orderRepository.AddOrder(orderHeader);
 
+
+            //Vid143. 6 Inyectamos Creamos el llamado al objeto de pago
+            PaymentRequestMessage paymentRequestMessage = new()
+            {
+                Name = orderHeader.FirstName + " " + orderHeader.LastName,
+                CardNumber = orderHeader.CardNumber,
+                CVV = orderHeader.CVV,
+                ExpiryMonthYear = orderHeader.ExpiryMonthYear,
+                OrderId = orderHeader.OrderHeaderId,
+                OrderTotal = orderHeader.OrderTotal,
+                Email = orderHeader.Email
+            };
+
+            try
+            {
+
+                //Vid144.3 public payment message, variable  orderPaymentProcessTopic
+                await _messageBus.PublishMessage(paymentRequestMessage, orderPaymentProcessTopic);
+                await args.CompleteMessageAsync(args.Message);
+
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
 
         }
 

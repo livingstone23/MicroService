@@ -93,9 +93,13 @@ namespace Manager.Web.Controllers
                 if (!response.IsSuccess)
                 {
                     TempData["Error"] = response.DisplayMessage;
+                    
                     return RedirectToAction(nameof(Checkout));
+
                 }
+
                 return RedirectToAction(nameof(Confirmation));
+
             }
             catch (Exception e)
             {

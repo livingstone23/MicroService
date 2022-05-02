@@ -1,11 +1,7 @@
-﻿using Manager.Services.OrderAPI.Messaging;
+﻿using Manager.Services.PaymentAPI.Messaging;
 
-namespace Manager.Services.OrderAPI.Extension
+namespace Manager.Services.PaymentAPI.Extension
 {
-
-    /// <summary>
-    /// Vid131.1 Clase que permite inicializar el start del ServiceProcess Bus
-    /// </summary>
     public static class ApplicationBuilderExtensions
     {
 

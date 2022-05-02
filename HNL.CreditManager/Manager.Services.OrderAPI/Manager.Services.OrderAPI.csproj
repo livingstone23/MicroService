@@ -24,4 +24,9 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Manager.MessageBus\Manager.MessageBus.csproj" />
+    <ProjectReference Include="..\PaymentProcessor\PaymentProcessor.csproj" />
+  </ItemGroup>
+
 </Project>

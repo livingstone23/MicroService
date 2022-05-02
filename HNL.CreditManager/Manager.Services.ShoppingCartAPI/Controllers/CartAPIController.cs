@@ -24,22 +24,22 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
         private readonly IMessageBus _messageBus;
         protected ResponseDto _response;
 
-
-        //private readonly ICouponRepository _couponRepository;
+        //Vid137.1 Habilitamos el ICouponRepository
+        private readonly ICouponRepository _couponRepository;
         //private readonly IMessageBus _messageBus;
         //private readonly IRabbitMQCartMessageSender _rabbitMQCartMessageSender;
 
 
-        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus)//, ICouponRepository couponRepository)
+        public CartAPIController(ICartRepository cartRepository, IMessageBus messageBus, ICouponRepository couponRepository)
              //, IRabbitMQCartMessageSender rabbitMQCartMessageSender, IMessageBus messageBus)
         {
+            
             _cartRepository = cartRepository;
             this._response = new ResponseDto();
             _messageBus = messageBus;
-            
-            //_couponRepository = couponRepository;
-            //_rabbitMQCartMessageSender = rabbitMQCartMessageSender;
+            _couponRepository = couponRepository;
 
+            //_rabbitMQCartMessageSender = rabbitMQCartMessageSender;
 
         }
 
@@ -158,17 +158,18 @@ namespace Manager.Services.ShoppingCartAPI.Controllers
                     return BadRequest();
                 }
 
-                //if (!string.IsNullOrEmpty(checkoutHeader.CouponCode))
-                //{
-                //    CouponDto coupon = await _couponRepository.GetCoupon(checkoutHeader.CouponCode);
-                //    if (checkoutHeader.DiscountTotal != coupon.DiscountAmount)
-                //    {
-                //        _response.IsSuccess = false;
-                //        _response.ErrorMessages = new List<string>() { "Coupon Price has changed, please confirm" };
-                //        _response.DisplayMessage = "Coupon Price has changed, please confirm";
-                //        return _response;
-                //    }
-                //}
+
+                if (!string.IsNullOrEmpty(checkoutHeader.CouponCode))
+                {
+                    CouponDto coupon = await _couponRepository.GetCoupon(checkoutHeader.CouponCode);
+                    if (checkoutHeader.DiscountTotal != coupon.DiscountAmount)
+                    {
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string>() { "Coupon Price has changed, please confirm" };
+                        _response.DisplayMessage = "Coupon Price has changed, please confirm";
+                        return _response;
+                    }
+                }
 
                 checkoutHeader.CartDetails = cartDto.CartDetails;
 
